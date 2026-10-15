@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campusly — College Event Dashboard</title>
+<style>
+:root { color-scheme: light dark; --bg: light-dark(#f6f7fb,#10131b); --panel: light-dark(#ffffff,#191e29); --panel2: light-dark(#f0f2f8,#222938); --text: light-dark(#171b2d,#f4f6fb); --muted: light-dark(#72788d,#a4adc0); --line: light-dark(#e7e9f1,#30384a); --purple: #6d5ce8; --purple2: #8b7cf6; --mint: #4fc6a4; --orange: #ffb56b; --pink: #ef7ca7; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+.app { min-height: 100vh; background: var(--bg); }
+.layout { display: grid; grid-template-columns: 248px minmax(0,1fr); min-height: 100vh; }
+aside { padding: 27px 17px; border-right: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; gap: 30px; }
+.brand { display:flex; align-items:center; gap:11px; padding: 0 12px; font-size: 21px; font-weight: 800; letter-spacing:-.7px; }
+.logo { width:36px; height:36px; display:grid; place-items:center; border-radius:12px; color:white; background:linear-gradient(135deg,#8c7cff,#5b4ad5); box-shadow:0 8px 20px #6d5ce833; font-size:20px; }
+.nav-label { color:var(--muted); font-size:10px; font-weight:800; letter-spacing:1.6px; padding:0 13px; margin-bottom:10px; }
+.nav { display:flex; flex-direction:column; gap:5px; }
+.nav button { border:0; background:transparent; color:var(--muted); border-radius:12px; padding:12px 13px; text-align:left; display:flex; gap:12px; align-items:center; font-size:13px; font-weight:650; cursor:pointer; width:100%; }
+.nav button .ico { width:18px; text-align:center; font-size:16px; }
+.nav button.active { background:light-dark(#efedff,#302c4c); color:light-dark(#5f4ed4,#c5bcff); }
+.side-bottom { margin-top:auto; border-radius:17px; background:linear-gradient(145deg,#28224d,#443a85); padding:17px; color:white; }
+.side-bottom .small { color:#c6c0f2; font-size:11px; line-height:1.5; }
+.side-bottom h3 { font-size:14px; margin:9px 0 7px; }
+.side-bottom button { margin-top:13px; border:0; background:white; color:#443a85; border-radius:9px; padding:9px 12px; font-size:11px; font-weight:800; cursor:pointer; }
+main { min-width:0; padding:28px clamp(18px,3.3vw,48px) 42px; max-width:1600px; width:100%; margin:0 auto; }
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:29px; }
+.crumb { color:var(--muted); font-size:12px; margin-bottom:6px; }
+h1 { font-size:clamp(25px,3vw,32px); letter-spacing:-1.2px; margin:0; }
+.top-actions { display:flex; align-items:center; gap:12px; }
+.search { position:relative; }
+.search input { width:205px; border:1px solid var(--line); border-radius:11px; background:var(--panel); color:var(--text); padding:11px 13px 11px 35px; outline:none; font-size:12px; }
+.search span { position:absolute; left:12px; top:10px; color:var(--muted); }
+.icon-btn { width:38px; height:38px; border:1px solid var(--line); background:var(--panel); color:var(--text); border-radius:11px; cursor:pointer; }
+.avatar { width:38px; height:38px; display:grid; place-items:center; border-radius:13px; color:#fff; font-weight:800; font-size:12px; background:linear-gradient(135deg,#ffb56b,#ed7ca7); }
+.welcome { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:22px; }
+.welcome p { color:var(--muted); margin:8px 0 0; font-size:13px; }
+.welcome p strong { color:var(--text); }
+.primary { border:0; background:var(--purple); color:white; border-radius:11px; padding:12px 16px; font-size:12px; font-weight:750; cursor:pointer; box-shadow:0 7px 18px #6d5ce82e; }
+.primary:hover { background:#5948d0; }
+.stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; margin-bottom:22px; }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:17px; padding:18px; min-width:0; }
+.stat-top { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:11px; gap:8px; }
+.stat-icon { width:34px; height:34px; display:grid; place-items:center; border-radius:11px; font-size:16px; }
+.lilac { background:light-dark(#efedff,#302c4c); color:#8574f5; } .green { background:light-dark(#e3f8f1,#1c4039); color:#36b991; } .yellow { background:light-dark(#fff2e4,#483526); color:#ef9d4d; } .rose { background:light-dark(#ffe9f0,#4a2b3a); color:#e87ba2; }
+.stat-num { font-size:28px; font-weight:800; letter-spacing:-1px; margin:13px 0 5px; }
+.stat-foot { font-size:10px; color:var(--muted); }
+.up { color:#35b58d; font-weight:800; }
+.content-grid { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr); gap:19px; align-items:start; }
+.panel { border:1px solid var(--line); border-radius:18px; background:var(--panel); padding:21px; min-width:0; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+.panel-head h2 { margin:0; font-size:16px; letter-spacing:-.3px; }
+.panel-head p { color:var(--muted); margin:5px 0 0; font-size:11px; }
+.text-btn { background:transparent; border:0; color:var(--purple2); font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; }
+.event-list { display:flex; flex-direction:column; gap:12px; }
+.event { display:grid; grid-template-columns:76px minmax(0,1fr) auto; gap:14px; align-items:center; padding:12px; border:1px solid var(--line); border-radius:14px; transition:.15s; }
+.event:hover { border-color:var(--purple2); transform:translateY(-1px); }
+.event-art { height:76px; border-radius:12px; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; font-weight:800; background:linear-gradient(145deg,#6b5be7,#b2a8ff); }
+.event-art.orange-art { background:linear-gradient(145deg,#ef9a57,#ffd09b); }
+.event-art.mint-art { background:linear-gradient(145deg,#2cae98,#92e4ce); }
+.event-art.pink-art { background:linear-gradient(145deg,#e76e9d,#ffb3c9); }
+.event-art span { font-size:10px; text-transform:uppercase; letter-spacing:1px; opacity:.85; }
+.event-art strong { font-size:23px; line-height:1.2; }
+.event-info h3 { font-size:13px; margin:0 0 6px; }
+.event-info p { margin:0; color:var(--muted); font-size:10px; line-height:1.7; }
+.pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.pill { display:inline-flex; padding:4px 7px; border-radius:6px; background:var(--panel2); color:var(--muted); font-size:9px; font-weight:750; }
+.pill.purple { color:#897af4; background:light-dark(#f0edff,#302c4c); }
+.register { border:1px solid var(--line); background:var(--panel); color:var(--text); padding:9px 11px; border-radius:9px; font-size:10px; font-weight:800; cursor:pointer; }
+.register.registered { color:#35b58d; background:light-dark(#e6f9f2,#1b3b34); border-color:transparent; }
+.right-col { display:flex; flex-direction:column; gap:19px; }
+.chart-wrap { display:flex; align-items:center; gap:22px; padding:5px 0 7px; }
+.donut { width:125px; height:125px; border-radius:50%; flex-shrink:0; display:grid; place-items:center; background:conic-gradient(#7968ef 0 44%,#54c8a7 44% 72%,#ffb56b 72% 89%,#ef7ca7 89% 100%); position:relative; }
+.donut:after { content:""; width:86px; height:86px; border-radius:50%; background:var(--panel); position:absolute; }
+.donut-center { z-index:1; text-align:center; }
+.donut-center strong { display:block; font-size:24px; letter-spacing:-1px; }
+.donut-center span { font-size:9px; color:var(--muted); }
+.legend { display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
+.legend-row { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:10px; color:var(--muted); }
+.legend-name { display:flex; align-items:center; gap:7px; color:var(--text); }
+.dot { width:7px; height:7px; border-radius:3px; display:inline-block; }
+.predict-card { background:linear-gradient(145deg,#29234e,#443881); border:0; color:white; overflow:hidden; position:relative; }
+.predict-card:after { content:"✦"; position:absolute; font-size:95px; color:#ffffff0c; right:9px; top:-15px; }
+.predict-card .panel-head { position:relative; z-index:1; }
+.predict-card .panel-head p { color:#c4bff0; }
+.predict-card h2 { color:white; }
+.predict-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; position:relative; z-index:1; }
+.field label { display:block; color:#d6d1f6; font-size:10px; margin-bottom:6px; }
+.field input, .field select { width:100%; padding:10px; border-radius:9px; border:1px solid #ffffff2a; background:#ffffff12; color:white; outline:none; font-size:12px; }
+.field select option { color:#171b2d; }
+.predict-card .primary { background:#fff; color:#493b8b; box-shadow:none; width:100%; margin-top:13px; position:relative; z-index:1; }
+.result { display:none; background:#ffffff15; border:1px solid #ffffff2a; border-radius:12px; padding:12px; margin-top:12px; position:relative; z-index:1; }
+.result strong { font-size:22px; }
+.result p { color:#d6d1f6; font-size:10px; margin:4px 0 0; line-height:1.5; }
+.activity { display:flex; flex-direction:column; gap:14px; }
+.activity-row { display:flex; gap:10px; align-items:flex-start; }
+.activity-ico { width:30px; height:30px; flex-shrink:0; display:grid; place-items:center; background:var(--panel2); border-radius:10px; }
+.activity-copy { font-size:11px; line-height:1.5; }
+.activity-copy span { display:block; color:var(--muted); font-size:10px; margin-top:3px; }
+.progress-item { margin-top:15px; }
+.progress-label { display:flex; justify-content:space-between; font-size:10px; margin-bottom:7px; }
+.progress-label span:last-child { color:var(--muted); }
+.progress { height:6px; border-radius:9px; background:var(--panel2); overflow:hidden; }
+.progress i { display:block; height:100%; border-radius:9px; background:var(--purple2); }
+.toast { position:fixed; right:22px; bottom:22px; background:var(--text); color:var(--panel); padding:13px 17px; border-radius:12px; font-size:12px; font-weight:700; box-shadow:0 10px 35px #0002; opacity:0; transform:translateY(10px); pointer-events:none; transition:.2s; z-index:10; }
+.toast.show { opacity:1; transform:translateY(0); }
+.modal-backdrop { position:fixed; inset:0; background:#11162999; display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
+.modal-backdrop.open { display:flex; }
+.modal { width:min(460px,100%); background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:24px; box-shadow:0 20px 80px #0003; }
+.modal h2 { margin:0 0 7px; font-size:20px; }
+.modal p { color:var(--muted); font-size:12px; line-height:1.6; }
+.modal .field { margin-top:14px; }
+.modal .field label { color:var(--muted); }
+.modal .field input,.modal .field select { background:var(--panel2); color:var(--text); border-color:var(--line); }
+.modal-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px; }
+.secondary { border:1px solid var(--line); background:var(--panel); color:var(--text); border-radius:10px; padding:11px 14px; font-size:12px; cursor:pointer; }
+.footer-note { color:var(--muted); font-size:10px; text-align:center; margin-top:25px; }
+@media (max-width:1100px) { .layout { grid-template-columns:78px minmax(0,1fr); } aside { padding:24px 10px; align-items:center; } .brand { padding:0; } .brand span:last-child,.nav-label,.nav button .nav-text,.side-bottom { display:none; } .nav { width:100%; } .nav button { justify-content:center; padding:13px 0; } .nav button .ico { font-size:19px; } .content-grid { grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr); } }
+@media (max-width:780px) { .layout { display:block; } aside { position:sticky; top:0; z-index:5; height:auto; border-right:0; border-bottom:1px solid var(--line); padding:10px 14px; flex-direction:row; justify-content:space-between; gap:12px; } .brand { gap:7px; } .brand span:last-child { display:inline; font-size:16px; } .logo { width:31px;height:31px; } aside > .nav { flex-direction:row; width:auto; gap:3px; } .nav button { width:38px; height:38px; padding:0; } .nav button:nth-child(n+5) { display:none; } main { padding:22px 16px 35px; } .topbar { margin-bottom:22px; } .search { display:none; } .stats { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .stat { padding:14px; } .stat-num { font-size:24px; } .content-grid { grid-template-columns:1fr; } .right-col { display:grid; grid-template-columns:1fr; } .welcome { align-items:flex-start; } .welcome .primary { padding:10px 12px; } }
+@media (max-width:450px) { .event { grid-template-columns:58px minmax(0,1fr); gap:10px; } .event-art { height:63px; } .event-art strong { font-size:20px; } .event > .register { grid-column:2; justify-self:start; } .chart-wrap { gap:13px; } .donut { width:105px; height:105px; } .donut:after { width:72px;height:72px; } .donut-center strong { font-size:21px; } .top-actions { gap:7px; } .welcome h1 { font-size:25px; } }
+</style>
+</head>
+<body>
+<div class="app">
+<div class="layout">
+<aside>
+  <div class="brand"><div class="logo">✦</div><span>campusly</span></div>
+  <div style="width:100%">
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-view="dashboard"><span class="ico">▦</span><span class="nav-text">Dashboard</span></button>
+      <button data-view="events"><span class="ico">◷</span><span class="nav-text">Explore events</span></button>
+      <button data-view="registrations"><span class="ico">▤</span><span class="nav-text">My registrations</span></button>
+      <button data-view="predictor"><span class="ico">✧</span><span class="nav-text">Performance predictor</span></button>
+      <button data-view="activity"><span class="ico">◉</span><span class="nav-text">Activity</span></button>
+    </nav>
+  </div>
+  <div style="width:100%">
+    <div class="nav-label">PREFERENCES</div>
+    <nav class="nav"><button id="themeBtn"><span class="ico">◐</span><span class="nav-text">Toggle appearance</span></button><button id="helpBtn"><span class="ico">?</span><span class="nav-text">Help & support</span></button></nav>
+  </div>
+  <div class="side-bottom"><div class="small">MAKE EVERY CAMPUS MOMENT COUNT</div><h3>Find your next big thing.</h3><div class="small">Discover communities, build skills, and make memories.</div><button id="discoverBtn">Explore events ↗</button></div>
+</aside>
+<main>
+  <header class="topbar"><div><div class="crumb">Workspace / <span id="crumbPage">Dashboard</span></div><h1 id="pageTitle">Dashboard overview</h1></div><div class="top-actions"><div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search events..." aria-label="Search events" /></div><button class="icon-btn" id="notifyBtn" aria-label="Notifications">♧</button><div class="avatar" title="Student profile">GS</div></div></header>
+  <section class="welcome"><div><h1 style="font-size:clamp(21px,2.4vw,27px)">Hey there, Gopi <span>✌️</span></h1><p>Your campus life, all in one place. <strong>Ready to make it count?</strong></p></div><button class="primary" id="newEventBtn">＋ Find an event</button></section>
+  <section class="stats" aria-label="Your activity statistics">
+    <article class="stat"><div class="stat-top"><span>Events attended</span><span class="stat-icon lilac">♧</span></div><div class="stat-num" id="attendedStat">08</div><div class="stat-foot"><span class="up">↗ 2 this month</span> · keep it up!</div></article>
+    <article class="stat"><div class="stat-top"><span>Registered events</span><span class="stat-icon green">▣</span></div><div class="stat-num" id="registeredStat">03</div><div class="stat-foot">Your next adventure awaits</div></article>
+    <article class="stat"><div class="stat-top"><span>Engagement score</span><span class="stat-icon yellow">✦</span></div><div class="stat-num">86<span style="font-size:15px;color:var(--muted)">/100</span></div><div class="stat-foot"><span class="up">Top 18%</span> of active students</div></article>
+    <article class="stat"><div class="stat-top"><span>Certificates earned</span><span class="stat-icon rose">♜</span></div><div class="stat-num">05</div><div class="stat-foot">Across 3 skill categories</div></article>
+  </section>
+  <section class="content-grid">
+    <div class="panel" id="eventsPanel"><div class="panel-head"><div><h2 id="eventsHeading">Upcoming events</h2><p id="eventsSubheading">A few good things happening around campus</p></div><button class="text-btn" id="viewAllBtn">View all events ↗</button></div><div class="event-list" id="eventList"></div></div>
+    <div class="right-col">
+      <div class="panel"><div class="panel-head"><div><h2>Your involvement</h2><p>Where you spend your campus energy</p></div><button class="text-btn" id="involvementInfo">Details</button></div><div class="chart-wrap"><div class="donut"><div class="donut-center"><strong>12</strong><span>activities</span></div></div><div class="legend"><div class="legend-row"><span class="legend-name"><i class="dot" style="background:#7968ef"></i>Technical</span><b>44%</b></div><div class="legend-row"><span class="legend-name"><i class="dot" style="background:#54c8a7"></i>Cultural</span><b>28%</b></div><div class="legend-row"><span class="legend-name"><i class="dot" style="background:#ffb56b"></i>Sports</span><b>17%</b></div><div class="legend-row"><span class="legend-name"><i class="dot" style="background:#ef7ca7"></i>Volunteering</span><b>11%</b></div></div></div></div>
+      <div class="panel predict-card" id="predictorPanel"><div class="panel-head"><div><h2>✧ Student performance</h2><p>Get a quick estimate and plan your next step</p></div></div><div class="predict-row"><div class="field"><label for="attendance">Attendance (%)</label><input id="attendance" type="number" min="0" max="100" value="88" /></div><div class="field"><label for="previousMarks">Previous marks (%)</label><input id="previousMarks" type="number" min="0" max="100" value="78" /></div><div class="field"><label for="studyHours">Study hours / day</label><input id="studyHours" type="number" min="0" max="24" step="0.5" value="2.5" /></div><div class="field"><label for="assignments">Assignments completed (%)</label><input id="assignments" type="number" min="0" max="100" value="85" /></div></div><button class="primary" id="predictBtn">Predict my performance ↗</button><div class="result" id="predictionResult" aria-live="polite"></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Recent activity</h2><p>Your latest campus updates</p></div><button class="text-btn" id="activityMore">See all</button></div><div class="activity" id="activityList"><div class="activity-row"><div class="activity-ico">🎟️</div><div class="activity-copy">You registered for <b>CodeSprint 2026</b><span>Today · 10:42 AM</span></div></div><div class="activity-row"><div class="activity-ico">🏅</div><div class="activity-copy">You earned a <b>Creative Thinker</b> badge<span>Yesterday · 4:18 PM</span></div></div><div class="activity-row"><div class="activity-ico">📣</div><div class="activity-copy">New event added: <b>Campus Open Mic</b><span>Oct 12 · 11:20 AM</span></div></div></div></div>
+    </div>
+  </section>
+  <div class="footer-note">Campusly · Built for curious minds and campus communities · Student preview data</div>
+</main>
+</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><h2 id="modalTitle">Create a campus event</h2><p id="modalDescription">Add an event to the student dashboard. This preview stores changes in the current page session.</p><div class="field"><label for="eventName">Event name</label><input id="eventName" placeholder="e.g. Design thinking workshop" /></div><div class="field"><label for="eventCategory">Category</label><select id="eventCategory"><option>Technical</option><option>Cultural</option><option>Sports</option><option>Volunteering</option></select></div><div class="field"><label for="eventDate">Date</label><input id="eventDate" type="date" /></div><div class="field"><label for="eventVenue">Venue</label><input id="eventVenue" placeholder="e.g. Main auditorium" /></div><div class="modal-actions"><button class="secondary" id="cancelModal">Cancel</button><button class="primary" id="saveEvent">Add event</button></div></div></div>
+<script>
+const events = [
+ {id:1,title:'CodeSprint 2026',category:'Technical',day:'22',month:'OCT',time:'9:30 AM – 4:00 PM',venue:'Innovation Lab · Block B',spots:18,registered:true,art:'',desc:'A fast-paced coding challenge for curious builders.'},
+ {id:2,title:'Campus Open Mic',category:'Cultural',day:'24',month:'OCT',time:'5:00 PM – 7:30 PM',venue:'Amphitheatre',spots:32,registered:false,art:'pink-art',desc:'Music, poetry, comedy, and the courage to take the mic.'},
+ {id:3,title:'Design for Good',category:'Workshop',day:'27',month:'OCT',time:'10:00 AM – 1:00 PM',venue:'Design Studio · Floor 2',spots:12,registered:true,art:'mint-art',desc:'Collaborate on design ideas that help your community.'},
+ {id:4,title:'Inter-College Sports Meet',category:'Sports',day:'30',month:'OCT',time:'8:00 AM – 5:00 PM',venue:'University Sports Ground',spots:45,registered:false,art:'orange-art',desc:'Bring your team spirit and meet athletes across campuses.'}
+];
+let activeView='dashboard';
+const eventList=document.getElementById('eventList');
+const toast=document.getElementById('toast');
+function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>toast.classList.remove('show'),2600)}
+function renderEvents(){const q=document.getElementById('searchInput').value.toLowerCase().trim();let shown=events.filter(e=>(e.title+' '+e.category+' '+e.venue).toLowerCase().includes(q));if(activeView==='registrations')shown=shown.filter(e=>e.registered);eventList.innerHTML='';if(!shown.length){eventList.innerHTML='<div style="padding:25px;text-align:center;color:var(--muted);font-size:12px">No matching events found. Try another search.</div>';return;}shown.forEach(e=>{const el=document.createElement('article');el.className='event';el.innerHTML=`<div class="event-art ${e.art}"><span>${e.month}</span><strong>${e.day}</strong></div><div class="event-info"><h3>${e.title}</h3><p>◷ ${e.time}<br>⌖ ${e.venue}</p><div class="pills"><span class="pill purple">${e.category}</span><span class="pill">${e.spots} spots left</span></div></div><button class="register ${e.registered?'registered':''}" data-register="${e.id}">${e.registered?'✓ Registered':'Register ↗'}</button>`;eventList.appendChild(el);});eventList.querySelectorAll('[data-register]').forEach(btn=>btn.addEventListener('click',()=>{const e=events.find(x=>x.id===Number(btn.dataset.register));e.registered=!e.registered;if(e.registered){e.spots=Math.max(0,e.spots-1);notify('You’re registered for '+e.title+'!');}else{e.spots++;notify('Registration cancelled for '+e.title+'.');}updateStats();renderEvents();}));}
+function updateStats(){document.getElementById('registeredStat').textContent=String(events.filter(e=>e.registered).length).padStart(2,'0');}
+function setView(view){activeView=view;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));const titles={dashboard:['Dashboard overview','Dashboard'],events:['Explore campus events','Explore events'],registrations:['My registrations','My registrations'],predictor:['Student performance predictor','Performance predictor'],activity:['Your activity','Activity']};document.getElementById('pageTitle').textContent=titles[view][0];document.getElementById('crumbPage').textContent=titles[view][1];document.getElementById('eventsHeading').textContent=view==='registrations'?'Your registered events':view==='activity'?'Campus activity':view==='predictor'?'Upcoming events to explore':'Upcoming events';document.getElementById('eventsSubheading').textContent=view==='registrations'?'Events you have saved your spot for':view==='activity'?'Keep up with what is happening on campus':'A few good things happening around campus';if(view==='predictor'){document.getElementById('predictorPanel').scrollIntoView({behavior:'smooth',block:'center'});}renderEvents();}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+document.getElementById('searchInput').addEventListener('input',renderEvents);
+document.getElementById('viewAllBtn').addEventListener('click',()=>setView('events'));
+document.getElementById('newEventBtn').addEventListener('click',()=>setView('events'));
+document.getElementById('discoverBtn').addEventListener('click',()=>setView('events'));
+document.getElementById('notifyBtn').addEventListener('click',()=>notify('You’re all caught up — no new notifications.'));
+document.getElementById('involvementInfo').addEventListener('click',()=>notify('Your activity mix includes technical, cultural, sports, and volunteering events.'));
+document.getElementById('activityMore').addEventListener('click',()=>{setView('activity');notify('Showing your latest campus activity.');});
+document.getElementById('helpBtn').addEventListener('click',()=>notify('Help centre: contact your campus event coordinator.'));
+document.getElementById('themeBtn').addEventListener('click',()=>{const root=document.documentElement;const dark=root.dataset.mode!=='dark';root.dataset.mode=dark?'dark':'light';root.style.colorScheme=dark?'dark':'light';notify(dark?'Dark appearance enabled.':'Light appearance enabled.');});
+function predict(){const a=Number(document.getElementById('attendance').value),m=Number(document.getElementById('previousMarks').value),h=Number(document.getElementById('studyHours').value),c=Number(document.getElementById('assignments').value);if([a,m,h,c].some(v=>!Number.isFinite(v))||a<0||a>100||m<0||m>100||h<0||h>24||c<0||c>100){notify('Please enter valid values within the indicated ranges.');return;}const estimate=Math.round(Math.max(0,Math.min(100,m*.42+a*.22+c*.21+Math.min(h,8)/8*15)));const band=estimate>=85?'Excellent progress':estimate>=70?'Good progress':estimate>=55?'Developing steadily':'Needs focused support';const result=document.getElementById('predictionResult');result.style.display='block';result.innerHTML=`<div style="font-size:10px;color:#d6d1f6;margin-bottom:4px">ESTIMATED PERFORMANCE SCORE</div><strong>${estimate}<span style="font-size:13px">/100</span></strong><div style="font-size:12px;font-weight:800;margin-top:5px">${band}</div><p>${a<75?'Consider improving attendance. ':''}${c<80?'Try to complete more assignments. ':''}${h<2?'A consistent study routine may help. ':'Keep building on your current habits. '}This is a simple illustrative estimate, not a validated academic prediction.</p>`;notify('Your estimate is ready.');}
+document.getElementById('predictBtn').addEventListener('click',predict);
+const backdrop=document.getElementById('modalBackdrop');
+function openModal(){backdrop.classList.add('open');document.getElementById('eventName').focus();}
+function closeModal(){backdrop.classList.remove('open');}
+document.getElementById('saveEvent').addEventListener('click',()=>{const title=document.getElementById('eventName').value.trim();const date=document.getElementById('eventDate').value;const venue=document.getElementById('eventVenue').value.trim();const category=document.getElementById('eventCategory').value;if(!title||!venue){notify('Add an event name and venue first.');return;}let day='05',month='NOV';if(date){const d=new Date(date+'T12:00:00');day=String(d.getDate()).padStart(2,'0');month=d.toLocaleString('en-US',{month:'short'}).toUpperCase();}events.unshift({id:Date.now(),title,category,day,month,time:'Time to be announced',venue,spots:30,registered:false,art:category==='Cultural'?'pink-art':category==='Sports'?'orange-art':category==='Volunteering'?'mint-art':'',desc:'New campus event'});closeModal();document.getElementById('eventName').value='';document.getElementById('eventVenue').value='';setView('events');notify('Event added to this preview.');});
+document.getElementById('cancelModal').addEventListener('click',closeModal);backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+renderEvents();updateStats();
+</script>
+</body>
+</html>
